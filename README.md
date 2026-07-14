@@ -129,8 +129,7 @@ Nextcloud has two distinct I/O profiles handled by separate datasets:
 
 A device syncing photos generates many small random writes. Landing those on SSD avoids
 the same SMR penalty as torrents. Once committed, the files sit on HDD and are read back
-sequentially. `data/vaultwarden` lives entirely on HDD — a password vault writes rarely
-and in tiny amounts, so no staging is needed.
+sequentially.
 
 ## Design decisions
 
@@ -156,4 +155,4 @@ and in tiny amounts, so no staging is needed.
 
 ## License
 
-MIT — use, adapt, or steal ideas freely.
+MIT
