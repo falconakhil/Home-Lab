@@ -147,10 +147,6 @@ and in tiny amounts, so no staging is needed.
 - **Path-based Routing in Nginx:** Since I am relying on tailscale for the certificate, I cannot
   use subdomains as tailscale does not provide a wildcard certificate. Hence I use a path
   based routing to expose different services on /service_name.
-- **Shared `arr` group with matching GIDs across jails.** Sonarr/Radarr/Transmission and
-  Jellyfin need to read/write the same media files across jail boundaries via `nullfs`
-  mounts. Matching GIDs plus the setgid bit and `umask 002` keep cross-jail file ownership
-  sane without loosening permissions globally.
 
 ## Stack
 
