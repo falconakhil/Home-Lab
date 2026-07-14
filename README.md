@@ -16,11 +16,11 @@ zero-config remote access.
 
 ```mermaid
 flowchart TB
-    subgraph Remote["Off-LAN, on tailnet<br/>(e.g. phone on mobile data)"]
+    subgraph Remote[""]
         TailClient["Tailnet Client"]
     end
 
-    subgraph LAN["Home LAN — 192.168.88.0/24"]
+    subgraph LAN[""]
         LanClient["LAN Client"]
     end
 
