@@ -9,7 +9,7 @@ zero-config remote access.
 - NextCloud: Free storage for backups at home instead of relying on expensive providers.
 - Adguard: With smart home devices becoming more and more common, to block out all tracking.
 - Jellyfin: To watch my personal media on TV and multiple home devices without copying them around.
-- Vaultwarden: To safely store my password on my hardware involving no one in between.
+- Vaultwarden: To safely store my passwords on my hardware involving no one in between.
 - Experimenting: To try out new things !
 
 ## Architecture
@@ -28,33 +28,36 @@ flowchart TB
         TS0["tailscale0<br/>100.x.x.x<br/>PF RDR, NAT"]
         IGC0["igc0<br/>192.168.x.x<br/>PF RDR, NAT"]
 
-        subgraph Core["lo1 · BastilleCore · 10.0.0.0/24"]
+        subgraph Core["Core · 10.0.0.0/24"]
             ADG["adguard<br/>10.0.0.53"]
         end
 
-        subgraph Web["lo2 · BastilleWeb · 10.1.1.0/24"]
+        subgraph Web["Web · 10.1.1.0/24"]
             Nginx["nginx<br/>10.1.1.80"]
             VW["vaultwarden<br/>10.1.1.81"]
             NC["nextcloud<br/>10.1.1.82"]
             JF["jellyfin<br/>10.1.1.83"]
         end
 
-        subgraph Media["lo3 · BastilleMedia · 10.2.2.0/24"]
+        subgraph Media["Media · 10.2.2.0/24"]
             ARR["arr<br/>10.2.2.81"]
         end
 
-        subgraph DB["lo4 · BastilleDB · 10.3.3.0/24"]
+        subgraph DB["DB · 10.3.3.0/24"]
             PG["postgres<br/>10.3.3.54"]
         end
     end
 
-    TailClient -->|"Tailscale DNS → 100.x.x.x"| TS0 --> Nginx
+    TailClient -->|"Tailscale DNS → 100.x.x.x"| TS0 -->|":80 / :443"| Nginx
     LanClient -->|"AdGuard DNS rewrite → 192.168.x.x"| IGC0
     IGC0 -->|":53 / :5380"| ADG
     IGC0 -->|":80 / :443"| Nginx
     Nginx --> VW
     Nginx --> NC
     Nginx --> JF
+    NC -->|":5432"| PG
+    IGC0 -.->|"NAT"| ARR
+    ADG ~~~ ARR
 ```
 
 Each Bastille jail class runs on its own loopback interface (`lo1`–`lo4`), each mapped to a
@@ -141,6 +144,9 @@ and in tiny amounts, so no staging is needed.
   AdGuard DNS rewrite → the LAN-facing host IP directly). By doing this we can let Tailscale get 
   a signed SSL certificate for HTTPS and use the same locally without having to self-sign or 
   buy a domain.
+- **Path-based Routing in Nginx:** Since I am relying on tailscale for the certificate, I cannot
+  use subdomains as tailscale does not provide a wildcard certificate. Hence I use a path
+  based routing to expose different services on /service_name.
 - **Shared `arr` group with matching GIDs across jails.** Sonarr/Radarr/Transmission and
   Jellyfin need to read/write the same media files across jail boundaries via `nullfs`
   mounts. Matching GIDs plus the setgid bit and `umask 002` keep cross-jail file ownership
