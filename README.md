@@ -16,17 +16,17 @@ zero-config remote access.
 
 ```mermaid
 flowchart TB
-    subgraph Remote[""]
+    subgraph Remote
         TailClient["Tailnet Client"]
     end
 
-    subgraph LAN[""]
+    subgraph LAN
         LanClient["LAN Client"]
     end
 
-    subgraph Host["FreeBSD Host — 192.168.x.x"]
-        TS0["tailscale0<br/>100.x.x.x"]
-        IGC0["igc0<br/>192.168.x.x<br/>PF RDR"]
+    subgraph Host["FreeBSD Host"]
+        TS0["tailscale0<br/>100.x.x.x<br/>PF RDR, NAT"]
+        IGC0["igc0<br/>192.168.x.x<br/>PF RDR, NAT"]
 
         subgraph Core["lo1 · BastilleCore · 10.0.0.0/24"]
             ADG["adguard<br/>10.0.0.53"]
