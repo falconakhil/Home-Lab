@@ -25,7 +25,7 @@ flowchart TB
     end
 
     subgraph Host["FreeBSD Host — 192.168.x.x"]
-        TS0["tailscale0<br/>100.92.x.x"]
+        TS0["tailscale0<br/>100.x.x.x"]
         IGC0["igc0<br/>192.168.x.x<br/>PF RDR"]
 
         subgraph Core["lo1 · BastilleCore · 10.0.0.0/24"]
@@ -48,7 +48,7 @@ flowchart TB
         end
     end
 
-    TailClient -->|"Tailscale DNS → 100.92.x.x"| TS0 --> Nginx
+    TailClient -->|"Tailscale DNS → 100.x.x.x"| TS0 --> Nginx
     LanClient -->|"AdGuard DNS rewrite → 192.168.x.x"| IGC0
     IGC0 -->|":53 / :5380"| ADG
     IGC0 -->|":80 / :443"| Nginx
