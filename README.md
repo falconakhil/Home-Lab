@@ -4,6 +4,8 @@ A self-hosted infrastructure running on FreeBSD, using Bastille jails
 for service isolation, PF for stateful firewalling, ZFS for storage, and Tailscale for
 zero-config remote access.
 
+<img width="822" height="331" alt="Screenshot_20260813_192701" src="https://github.com/user-attachments/assets/040735fb-2b7b-4dc7-aa8f-0399ae8bd02d" />
+
 ## Why this exists
 
 - NextCloud: Free storage for backups at home instead of relying on expensive providers.
