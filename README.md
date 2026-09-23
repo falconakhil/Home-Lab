@@ -12,6 +12,7 @@ zero-config remote access.
 - Adguard: With smart home devices becoming more and more common, to block out all tracking.
 - Jellyfin: To watch my personal media on TV and multiple home devices without copying them around.
 - Vaultwarden: To safely store my passwords on my hardware involving no one in between.
+- Portfolio: To host my portfolio website on https://portfolio.akhils.tech/
 - Experimenting: To try out new things !
 
 ## Architecture
@@ -20,6 +21,7 @@ zero-config remote access.
 flowchart TB
     subgraph Remote
         TailClient["Tailnet Client"]
+        PublicClient["Public Client"]
     end
 
     subgraph LAN
@@ -31,6 +33,7 @@ flowchart TB
         IGC0["igc0<br/>192.168.x.x<br/>PF RDR, NAT"]
 
         subgraph Core["Core · 10.0.0.0/24"]
+            CFD["cloudflared<br/>10.0.0.10"]
             ADG["adguard<br/>10.0.0.53"]
             MON["monitoring<br/>10.0.0.80"]
         end
@@ -40,6 +43,7 @@ flowchart TB
             VW["vaultwarden<br/>10.1.1.81"]
             NC["nextcloud<br/>10.1.1.82"]
             JF["jellyfin<br/>10.1.1.83"]
+            PORT["portfolio<br/>10.1.1.84"]
         end
 
         subgraph Media["Media · 10.2.2.0/24"]
@@ -52,15 +56,20 @@ flowchart TB
     end
 
     TailClient -->|"Tailscale DNS → 100.x.x.x"| TS0 -->|":80 / :443"| Nginx
+    PublicClient -->|"Cloudflare"| CFD
     LanClient -->|"AdGuard DNS rewrite → 192.168.x.x"| IGC0
     IGC0 -->|":53 / :5380"| ADG
     IGC0 -->|":80 / :443"| Nginx
     Nginx --> VW
     Nginx --> NC
     Nginx --> JF
+    Nginx --> PORT
+    Nginx --> ARR
     NC -->|":5432"| PG
     IGC0 -.->|"NAT"| ARR
     IGC0 -->|":3000"| MON
+    IGC0 -.->|"NAT"| CFD
+    CFD -->|":80"| Nginx
     ADG ~~~ ARR
 ```
 
@@ -73,11 +82,13 @@ network path to the database subnet unless PF explicitly allows it.
 | Jail          | Subnet                | IP           | Role                              |
 |---------------|------------------------|--------------|-------------------------------------|
 | `adguard`     | BastilleCore (10.0.0.0/24) | 10.0.0.53    | DNS / ad & tracker filtering      |
+| `cloudflared` | BastilleCore               | 10.0.0.10    | Cloudflare Tunnel to expose portfolio website to the public |
 | `monitoring`  | BastilleCore               | 10.0.0.80    | Prometheus and Grafana for monitoring the system |
 | `nginx`       | BastilleWeb (10.1.1.0/24)  | 10.1.1.80    | Reverse proxy, TLS termination    |
 | `vaultwarden` | BastilleWeb                | 10.1.1.81    | Bitwarden-compatible password mgr |
 | `nextcloud`   | BastilleWeb                | 10.1.1.82    | File sync / self-hosted cloud     |
 | `jellyfin`    | BastilleWeb                | 10.1.1.83    | Media server                      |
+| `portfolio`   | BastilleWeb                | 10.1.1.84    | Personal portfolio website        |
 | `arr`         | BastilleMedia (10.2.2.0/24)| 10.2.2.81    | Sonarr, Radarr, Transmission      |
 | `postgres`    | BastilleDB (10.3.3.0/24)   | 10.3.3.54    | Shared PostgreSQL 16 backend      |
 
@@ -151,6 +162,7 @@ sequentially.
 - **Path-based Routing in Nginx:** Since I am relying on tailscale for the certificate, I cannot
   use subdomains as tailscale does not provide a wildcard certificate. Hence I use a path
   based routing to expose different services on /service_name.
+- **Cloudflared for Public Exposure:** The cloudflared tunnel is used to expose the portfolio website to the public instead of using a Tailscale funnel. This decision was made because Cloudflare provides rate limiting on their edge network. If a Tailscale funnel were used, rate limiting would have to be performed by my local Nginx instance, which in the event of a DDoS attack would empty my ISP data quota.
 
 ## Stack
 
