@@ -32,6 +32,7 @@ flowchart TB
 
         subgraph Core["Core · 10.0.0.0/24"]
             ADG["adguard<br/>10.0.0.53"]
+            MON["monitoring<br/>10.0.0.80"]
         end
 
         subgraph Web["Web · 10.1.1.0/24"]
@@ -59,6 +60,7 @@ flowchart TB
     Nginx --> JF
     NC -->|":5432"| PG
     IGC0 -.->|"NAT"| ARR
+    IGC0 -->|":3000"| MON
     ADG ~~~ ARR
 ```
 
@@ -71,6 +73,7 @@ network path to the database subnet unless PF explicitly allows it.
 | Jail          | Subnet                | IP           | Role                              |
 |---------------|------------------------|--------------|-------------------------------------|
 | `adguard`     | BastilleCore (10.0.0.0/24) | 10.0.0.53    | DNS / ad & tracker filtering      |
+| `monitoring`  | BastilleCore               | 10.0.0.80    | Prometheus and Grafana for monitoring the system |
 | `nginx`       | BastilleWeb (10.1.1.0/24)  | 10.1.1.80    | Reverse proxy, TLS termination    |
 | `vaultwarden` | BastilleWeb                | 10.1.1.81    | Bitwarden-compatible password mgr |
 | `nextcloud`   | BastilleWeb                | 10.1.1.82    | File sync / self-hosted cloud     |
