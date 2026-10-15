@@ -1,0 +1,2 @@
+/usr/local/bastille/releases/15.0-RELEASE /usr/local/bastille/jails/vaultwarden/root/.bastille nullfs ro 0 0
+/data/vaultwarden /usr/local/bastille/jails/vaultwarden/root/data nullfs rw 0 0

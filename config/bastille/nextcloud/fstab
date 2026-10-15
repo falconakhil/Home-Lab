@@ -1,0 +1,3 @@
+/usr/local/bastille/releases/15.0-RELEASE /usr/local/bastille/jails/nextcloud/root/.bastille nullfs ro 0 0
+/data/nextcloud /usr/local/bastille/jails/nextcloud/root/data nullfs rw 0 0
+/zroot/data/nextcloud/ /usr/local/bastille/jails/nextcloud/root/data/appdata_ocvvl2x7an0r nullfs   rw   0   0

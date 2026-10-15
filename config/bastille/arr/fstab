@@ -1,0 +1,3 @@
+/usr/local/bastille/releases/15.0-RELEASE /usr/local/bastille/jails/arr/root/.bastille nullfs ro 0 0
+/data/media /usr/local/bastille/jails/arr/root/data nullfs rw 0 0
+/zroot/data/arr /usr/local/bastille/jails/arr/root/downloads nullfs rw 0 0
