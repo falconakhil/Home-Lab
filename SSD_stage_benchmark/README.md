@@ -51,7 +51,7 @@ The benchmark measures end-to-end completion time, including the SSD write and s
 | 2 | 651.043 | 27.938 |
 | 3 | 655.546 | 37.806 |
 
-The staged approach was faster in all three trials. However, the variation in staged completion time indicates that further testing would be useful to assess repeatability.
+The staged approach was faster in all three trials.
 
 ## Methodology
 
@@ -106,8 +106,6 @@ The script creates temporary benchmark files, reports individual trial results, 
 ## Interpretation
 
 The results demonstrate a substantial performance difference between the two approaches under this particular synthetic workload.
-
-The likely benefit is that the SSD absorbs the random-write workload while the HDD receives the completed file as a sequential copy. However, the experiment does not independently establish that SMR cache exhaustion is the sole cause of the slowdown.
 
 The results also depend on drive state, caching, filesystem behavior, USB connectivity, and background activity.
 
