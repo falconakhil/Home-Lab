@@ -24,6 +24,9 @@ The benchmark measures end-to-end completion time, including the SSD write and s
 
 ## Benchmark Results
 
+**HDD Model**: WD Elements 2621
+**SSD Model**: TWSC TSC1BN256-F7T10A
+
 **Workload:** 512 MiB of 4 KiB random writes  
 **Trials:** 3 per approach  
 **Summary:** Median completion time
